@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:icon="@drawable/ic_home"
+        android:title="Home"
+        android:id="@+id/home"/>
+
+    <item
         android:icon="@drawable/ic_shop_24px"
-        android:title="Products" />
+        android:title="Products"
+        android:id="@+id/products"/>
 </menu>

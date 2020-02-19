@@ -1,5 +1,12 @@
 package com.example.nn4m;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,15 +14,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.material.navigation.NavigationView;
-
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ProductsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -30,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView textView = findViewById(R.id.txtTitle);
-        textView.setText("River Island");
+        textView.setText("Products");
 
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -50,9 +53,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.home: drawerLayout.closeDrawers(); return true;
-            case R.id.products: startActivity(new Intent(this, ProductsActivity.class)); return true;
-            default: return true;
+            case R.id.home: startActivity(new Intent(this, MainActivity.class));
+            case R.id.products: drawerLayout.closeDrawers();
         }
+        return true;
     }
 }
