@@ -2,14 +2,13 @@ package com.example.nn4m;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,13 +21,13 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, price;
-        public ImageView thumbnail;
+        public ImageView productThumbnail;
 
         public MyViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.name);
+            name = (TextView) view.findViewById(R.id.product_name);
             price = (TextView) view.findViewById(R.id.price);
-            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            productThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
         }
     }
 
@@ -41,7 +40,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.content_products, parent, false);
+                .inflate(R.layout.custom_products_layout, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -51,9 +50,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         Product product = productList.get(position);
         holder.name.setText(product.getName());
         holder.price.setText("£"+product.getPrice());
+        Picasso.get().load(product.getImage()).into(holder.productThumbnail);
+
 
         // loading album cover using Glide library
-        
+
     }
 
     @Override

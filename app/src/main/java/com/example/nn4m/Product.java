@@ -4,13 +4,13 @@ import android.media.Image;
 
 public class Product {
     private String name;
-    private Image image;
-    private Double price;
+    private String image;
+    private String price;
 
     public Product() {
     }
 
-    public Product(String name, Image image, Double price) {
+    public Product(String name, String image, String price) {
         this.name = name;
         this.image = image;
         this.price = price;
@@ -24,19 +24,19 @@ public class Product {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
-    public Image getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }
