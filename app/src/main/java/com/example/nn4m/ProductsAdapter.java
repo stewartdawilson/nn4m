@@ -1,9 +1,14 @@
 package com.example.nn4m;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyViewHolder> {
 
+    private static final String TAG = "ProductsAdapter";
+
     private Context mContext;
     private List<Product> productList;
 
@@ -25,9 +32,33 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
 
         public MyViewHolder(View view) {
             super(view);
+            Log.d(TAG, "Setting view");
             name = (TextView) view.findViewById(R.id.product_name);
             price = (TextView) view.findViewById(R.id.price);
             productThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+
+            productThumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Dialog nagDialog = new Dialog(mContext,android.R.style.Theme_Black_NoTitleBar);
+                    nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                    nagDialog.setCancelable(false);
+                    nagDialog.setContentView(R.layout.preview_image);
+                    Button btnClose = nagDialog.findViewById(R.id.btnIvClose);
+                    ImageView ivPreview = nagDialog.findViewById(R.id.iv_preview_image);
+                    ivPreview.setBackground(productThumbnail.getDrawable());
+                    btnClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View arg0) {
+
+                            nagDialog.dismiss();
+                        }
+                    });
+                    nagDialog.show();
+                }
+            });
+
         }
     }
 
@@ -49,12 +80,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Product product = productList.get(position);
         holder.name.setText(product.getName());
-        holder.price.setText("£"+product.getPrice());
+        holder.price.setText(product.getPrice());
         Picasso.get().load(product.getImage()).into(holder.productThumbnail);
-
-
-        // loading album cover using Glide library
-
     }
 
     @Override

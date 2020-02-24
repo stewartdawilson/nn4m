@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -20,12 +21,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -37,6 +41,9 @@ import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "ProductsActivity";
+
+
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     Toolbar toolbar;
@@ -44,19 +51,19 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
     RecyclerView recyclerView;
     List<Product> products;
 
-    private static String JSON_URL = "https://static.ristack.nn4maws.net/category/2506/products.json";
-    Adapter adapter;
+    private static String JSON_URL = "https://static-ri.ristack-3.nn4maws.net/v1/plp/en_gb/2506/products.json";
+    ProductsAdapter adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_products);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView textView = findViewById(R.id.txtTitle);
-        textView.setText("Products");
+        textView.setText(R.string.products);
 
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -66,6 +73,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+
         recyclerView = findViewById(R.id.productList);
 
         products = new ArrayList<>();
@@ -77,30 +85,47 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
 
     private void extractProducts() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSON_URL, null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, JSON_URL, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        JSONObject productObject = response.getJSONObject(i);
-                        Product product = new Product();
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, response.toString());
+                Log.d(TAG, response.length()+"");
+                try {
+                    JSONArray jsonArray = response.getJSONArray("Products");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            JSONObject productObject = jsonArray.getJSONObject(i);
 
+                            Product product = new Product();
+                            product.setName(productObject.getString("name"));
+                            product.setPrice("£"+productObject.getString("cost"));
+                            product.setImage(productObject.getJSONArray("allImages").getString(0));
+                            products.add(product);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(ProductsActivity.this,2,GridLayoutManager.VERTICAL,false);
+                    recyclerView.setLayoutManager(gridLayoutManager);
+                    adapter = new ProductsAdapter(ProductsActivity.this,products);
+                    recyclerView.setAdapter(adapter);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-                /*recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                adapter = new Adapter(getApplicationContext(),songs);
-                recyclerView.setAdapter(adapter);*/
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("tag", "onErrorResponse: " + error.getMessage());
+                error.printStackTrace();
+
+                Log.e(TAG, "onErrorResponse: " + error.getMessage());
             }
         });
+        queue.add(jsonObjectRequest);
     }
 
 
